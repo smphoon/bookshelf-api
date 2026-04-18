@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
                 "http://127.0.0.1:5500",
                 "http://localhost:5500",
-                "https://<your-static-web-app>.azurestaticapps.net")
+                "https://icy-smoke-023496c03.7.azurestaticapps.net")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
