@@ -1,0 +1,36 @@
+### Test 1 — POST via JSON
+POST https://localhost:5190/api/books
+Content-Type: application/json
+
+{
+  "title": "The Hobbit",
+  "author": "J.R.R. Tolkien",
+  "genre": "Fantasy",
+  "notes": "A comfort reread",
+  "status": "Completed"
+}
+
+###
+
+### Test 2 — POST via Form Data
+POST https://localhost:5190/api/books/form
+Content-Type: application/x-www-form-urlencoded
+
+title=Neuromancer&author=William Gibson&genre=Sci-Fi&status=Want to Read
+
+###
+
+### Test 3 — POST via Query String
+POST https://localhost:5190/api/books/query?title=1984&author=George Orwell&genre=Classic&status=Completed
+
+###
+
+### Test 4 — GET all books
+GET https://localhost:5190/api/books
+
+###
+
+### Test 5 — GET with search, sort and pagination
+GET https://localhost:5190/api/books?search=bran&sortBy=Title&sortDirection=asc&page=1&pageSize=5
+
+###
