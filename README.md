@@ -2,6 +2,11 @@
 
 A RESTful Web API built with ASP.NET Core (.NET 10) and Dapper, backed by Azure SQL Database. Built as part of a technical exercise demonstrating Azure-based architecture and API design.
 
+## Live Demo
+
+- **API (Swagger):** https://bookshelf-api-smphoon-b2d2bdf8abfecse8.ukwest-01.azurewebsites.net/swagger
+- **SPA:** https://icy-smoke-023496c03.7.azurestaticapps.net
+
 ## Tech Stack
 
 - **Framework:** ASP.NET Core (.NET 10) - Controller-based
@@ -56,7 +61,10 @@ Column names cannot be parameterised in SQL, making ORDER BY a common injection 
 Returns the full inserted row including database-generated `Id` and audit timestamps in a single round trip, avoiding a separate SELECT after INSERT.
 
 **No index on Title**
-The SPA performs `LIKE '%keyword%'` contains searches. A nonclustered index on Title cannot be used by SQL Server for leading-wildcard LIKE queries, it would still result in a full scan. This is negligible at current demo scale. 
+The SPA performs `LIKE '%keyword%'` contains searches. A nonclustered index on Title cannot be used by SQL Server for leading-wildcard LIKE queries, it would still result in a full scan. A nonclustered index was added for the `equals` exact-match search mode which does benefit from it.
+
+**Azure SQL free tier retry handler**
+Azure SQL free tier auto-pauses after inactivity. The repository wraps all database operations in a retry handler that catches error 40613 (database unavailable during resume), waits 30 seconds, and retries once. Only error 40613 is caught — not all SQL exceptions — to avoid masking real errors such as constraint violations.
 
 **Credentials**
 The connection string is stored in 'appsettings.Development.json' which is gitignored. 
@@ -78,8 +86,11 @@ The connection string is stored in 'appsettings.Development.json' which is gitig
   }
 }
 ```
-3. Run with `dotnet run` — Swagger UI available at `https://localhost:{port}/swagger`
-4. Use `requests.http` to test all three input formats (JSON, form-data, query string)
+3. Add your local machine IP to the Azure SQL Server firewall rules
+4. Run with `dotnet run` — Swagger UI available at `https://localhost:{port}/swagger`
+5. Use `requests.http` to test all three input formats (JSON, form-data, query string)
 
 > `appsettings.Development.json` is gitignored — never commit credentials to source control.
+
+> Azure SQL free tier assigns dynamic IPs to local machines. If you see error 40615, add your current IP to the Azure SQL Server firewall rules under Networking.
 
